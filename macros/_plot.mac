@@ -1,0 +1,10 @@
+# Run this macro file to plot the data of the HodoSim simulation with the RootApp
+
+# For debug purposes run executables from both this and the build directory,
+# if the MuScinTest executable is launched from the build directory we can remove the next line
+# /control/shell cd out\build\Release\ && RootApp\RootApp
+/control/shell RootApp\RootApp
+
+# Alternatively it is possible to use the root macro instead of the root executable
+#/control/shell root plot.C
+

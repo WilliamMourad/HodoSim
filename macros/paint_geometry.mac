@@ -1,0 +1,12 @@
+# Paints the geometry for a bettere visualization of single components
+
+# /vis/geometry/set/visibility WorldLogic 0 false
+# 
+# /vis/geometry/set/colour SiPMLogic 0 255 223 0
+# 
+# /vis/geometry/set/colour ScintLogic 0 0 255 0 
+# 
+# /vis/geometry/set/colour XCoatLogic 0 0 213 255
+# /vis/geometry/set/colour YCoatLogic 0 0 213 255
+# /vis/geometry/set/colour FrontCoatLogic 0 0 213 255
+

@@ -1,0 +1,5 @@
+# Use this macro to build custom GUI buttons
+
+# Add quick plot funcionality to the GUI
+#/gui/addMenu plot Plot
+#/gui/addButton plot "Plot with RootApp" "/control/execute macros\_plot.mac"
