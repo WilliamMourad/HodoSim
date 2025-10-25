@@ -30,24 +30,28 @@ RunAction::RunAction(RunActionParameters runActionParameters)
 	analysisManager->SetVerboseLevel(1);
 	analysisManager->SetNtupleMerging(true);
 
+	
 	// Create Ntuples and histograms here using analysisManager
-	// I need to figure out how to parametrize this better, probably passing a struct to the RunAction constructor
+
 	analysisManager->CreateH1("ScintOpticalPhotonsEnergy", "Scint Optical Photons Energy (eV)", 1000, 2.2, 3.3);
-	analysisManager->CreateH1("CerOpticalPhotonsEnergy", "Cer Optical Photons Energy (eV)", 100, 1, 10);			// not fundamental, can be removed to save space
 	analysisManager->CreateH1("ScintOpticalPhotonsTime", "Scint Optical Photons Time (ns)", 1000, 0, 30);
-	analysisManager->CreateH1("CerOpticalPhotonsTime", "Cer Optical Photons Time (ns)", 10, 0, 1);					// not fundamental, can be removed to save space
-
-	analysisManager->CreateH2("ScintOpticalPhotonsSpread", "Scint Optical Photons Spread; X (mm); Y (mm)", 100, -40, 40, 100, -40, 40);	// not fundamental, can be removed to save space
-	analysisManager->CreateH2("CerOpticalPhotonsSpread", "Cer Optical Photons Spread; X (mm); Y (mm)", 1000, -40, 40, 1000, -40, 40);		// not fundamental, can be removed to save space
-
-	analysisManager->CreateH1("OpticalPhotonsReflections", "Optical Photons Reflections", 100, 0, 100);
+	analysisManager->CreateH2("ScintOpticalPhotonsSpread", "Scint Optical Photons Spread; X (mm); Y (mm)", 100, -40, 40, 100, -40, 40);
+	analysisManager->CreateH1("OpticalPhotonsReflections0", "Optical Photons Reflections", 1000, 0, 1000);
+	analysisManager->CreateH1("OpticalPhotonsReflections1", "Optical Photons Reflections", 1000, 0, 1000);
+	analysisManager->CreateH1("OpticalPhotonsReflections2", "Optical Photons Reflections", 1000, 0, 1000);
+	analysisManager->CreateH1("OpticalPhotonsReflections3", "Optical Photons Reflections", 1000, 0, 1000);
 
 	analysisManager->CreateNtuple("PerEventCollectedData", "Per-Event Collected Data");
 	analysisManager->CreateNtupleDColumn("EventID");
-	analysisManager->CreateNtupleDColumn("ScintOPsCollected");
-	analysisManager->CreateNtupleDColumn("CerOPsCollected");
+	analysisManager->CreateNtupleDColumn("ScintOPsCollected0");
+	analysisManager->CreateNtupleDColumn("ScintOPsCollected1");
+	analysisManager->CreateNtupleDColumn("ScintOPsCollected2");
+	analysisManager->CreateNtupleDColumn("ScintOPsCollected3");
+	analysisManager->CreateNtupleDColumn("CerOPsCollected0");
+	analysisManager->CreateNtupleDColumn("CerOPsCollected1");
+	analysisManager->CreateNtupleDColumn("CerOPsCollected2");
+	analysisManager->CreateNtupleDColumn("CerOPsCollected3");
 	analysisManager->CreateNtupleDColumn("ScintTotalEdep");
-	analysisManager->CreateNtupleDColumn("SiPMTotalEdep");
 	analysisManager->CreateNtupleDColumn("CoatingTotalEdep");
 	analysisManager->CreateNtupleDColumn("MuPathLength");
 	analysisManager->CreateNtupleDColumn("MuonHitX");

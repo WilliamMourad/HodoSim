@@ -111,87 +111,34 @@ G4VPhysicalVolume* DetectorConstruction::BuildGeometry()
 		#pragma endregion Scintillator Geometry
 
 		#pragma region Coating Geometry
-	// X-Sides Coating
-	G4Box* xCoatings = new G4Box(
-		"XCoatSolid",
-		plateSizeX / 2,
-		coatingThickness / 2,
-		plateThickness / 2
-	);
-	G4LogicalVolume* xCoatingLogic = new G4LogicalVolume(xCoatings, coating_material, "XCoatLogic");
-	G4ThreeVector xCoatingTopPosition = G4ThreeVector(0, plateSizeY / 2 + coatingThickness / 2 + gap, 0);
-	G4ThreeVector xCoatingBottomPosition = G4ThreeVector(0, -plateSizeY / 2 - coatingThickness / 2 - gap, 0);
 
-	G4VPhysicalVolume* xCoatingTopPhysical = new G4PVPlacement(
-		nullptr,
-		xCoatingTopPosition,
-		xCoatingLogic,
-		"XCoatTopPhysical",
-		worldLogic,
-		false,
-		0,
-		true
-	);
-
-	G4VPhysicalVolume* xCoatingBottomPhysical = new G4PVPlacement(
-		nullptr,
-		xCoatingBottomPosition,
-		xCoatingLogic,
-		"XCoatBottomPhysical",
-		worldLogic,
-		false,
-		0,
-		true
-	);
-
-	// Y-Sides Coating
-	G4Box* yCoatings = new G4Box(
-		"YCoatSolid",
-		coatingThickness / 2,
-		plateSizeY / 2,
-		plateThickness / 2
-	);
-	G4LogicalVolume* yCoatingLogic = new G4LogicalVolume(yCoatings, coating_material, "YCoatLogic");
-	G4ThreeVector yCoatingLeftPosition = G4ThreeVector(-plateSizeX / 2 - coatingThickness / 2 - gap, 0, 0);
-	G4ThreeVector yCoatingRightPosition = G4ThreeVector(plateSizeX / 2 + coatingThickness / 2 + gap, 0, 0);
-
-	G4VPhysicalVolume* yCoatingLeftPhysical = new G4PVPlacement(
-		nullptr,
-		yCoatingLeftPosition,
-		yCoatingLogic,
-		"YCoatLeftPhysical",
-		worldLogic,
-		false,
-		0,
-		true
-	);
-
-	G4VPhysicalVolume* yCoatingRightPhysical = new G4PVPlacement(
-		nullptr,
-		yCoatingRightPosition,
-		yCoatingLogic,
-		"YCoatRightPhysical",
-		worldLogic,
-		false,
-		0,
-		true
-	);
-
-	// Front Coating
-	G4Box* frontCoating = new G4Box(
-		"FrontCoatSolid",
+	// Front & back coating plates
+	G4Box* coatingSolid = new G4Box(
+		"CoatSolid",
 		plateSizeX / 2,
 		plateSizeY / 2,
 		coatingThickness / 2
 	);
-	G4LogicalVolume* frontCoatingLogic = new G4LogicalVolume(frontCoating, coating_material, "FrontCoatLogic");
-	G4ThreeVector frontCoatingPosition = G4ThreeVector(0, 0, -plateThickness / 2 - coatingThickness / 2 - gap);
+	G4LogicalVolume* coatingLogic = new G4LogicalVolume(coatingSolid, coating_material, "CoatLogic");
+	G4ThreeVector coatingFrontPosition = G4ThreeVector(0, 0, plateThickness / 2 + coatingThickness / 2 + gap);
+	G4ThreeVector coatingBackPosition = G4ThreeVector(0, 0, - plateThickness / 2 - coatingThickness / 2 - gap);
 
 	G4VPhysicalVolume* frontCoatingPhysical = new G4PVPlacement(
 		nullptr,
-		frontCoatingPosition,
-		frontCoatingLogic,
+		coatingFrontPosition,
+		coatingLogic,
 		"FrontCoatPhysical",
+		worldLogic,
+		false,
+		0,
+		true
+	);
+
+	G4VPhysicalVolume* backCoatingPhysical = new G4PVPlacement(
+		nullptr,
+		coatingBackPosition,
+		coatingLogic,
+		"BackCoatPhysical",
 		worldLogic,
 		false,
 		0,
@@ -201,19 +148,31 @@ G4VPhysicalVolume* DetectorConstruction::BuildGeometry()
 		#pragma endregion Coating Geometry
 
 		#pragma region SiPM Geometry
-	// SiPM 
+
+	// For simplicity i'll start with just 4 SiPMs, one for each lateral side of the scint plate.
+	// In a future version I may consider adding a variable to control the number of SiPMs per side.
+
 	G4Box* siPMSolid = new G4Box(
 		"SiPMSolid",
 		plateSizeX / 2,
-		plateSizeY / 2,
+		siPMThickenss / 2,
 		siPMThickenss / 2
 	);
 	G4LogicalVolume* siPMLogic = new G4LogicalVolume(siPMSolid, sipm_material, "SiPMLogic");
-	G4ThreeVector siPMPosition = G4ThreeVector(0, 0, plateThickness / 2 + siPMThickenss / 2 + gap);
 	
-	G4VPhysicalVolume* siPMPhysical = new G4PVPlacement(
+	G4ThreeVector topSiPMPosition = G4ThreeVector(0, plateSizeY / 2 + siPMThickenss / 2 + gap, 0);
+	G4ThreeVector bottomSiPMPosition = G4ThreeVector(0, -plateSizeY / 2 - siPMThickenss / 2 - gap, 0);
+	G4ThreeVector rightSiPMPosition = G4ThreeVector(plateSizeX / 2 + siPMThickenss / 2 + gap, 0, 0);
+	G4ThreeVector leftSiPMPosition = G4ThreeVector(- plateSizeX / 2 - siPMThickenss / 2 - gap, 0, 0);
+	G4RotationMatrix* rightSiPMRotation = new G4RotationMatrix();
+	G4RotationMatrix* leftSiPMRotation = new G4RotationMatrix();
+	
+	rightSiPMRotation->rotateZ(90 * deg);
+	leftSiPMRotation->rotateZ(-90 * deg);
+
+	G4VPhysicalVolume* topSiPMPhysical = new G4PVPlacement(
 		nullptr,
-		siPMPosition,
+		topSiPMPosition,
 		siPMLogic,
 		"SiPMPhysical",
 		worldLogic,
@@ -222,69 +181,110 @@ G4VPhysicalVolume* DetectorConstruction::BuildGeometry()
 		true
 	);
 
+	G4VPhysicalVolume* bottomSiPMPhysical = new G4PVPlacement(
+		nullptr,
+		bottomSiPMPosition,
+		siPMLogic,
+		"SiPMPhysical",
+		worldLogic,
+		false,
+		2,
+		true
+	);
+
+	G4VPhysicalVolume* rightSiPMPhysical = new G4PVPlacement(
+		rightSiPMRotation,
+		rightSiPMPosition,
+		siPMLogic,
+		"SiPMPhysical",
+		worldLogic,
+		false,
+		1,
+		true
+	);
+
+	G4VPhysicalVolume* leftSiPMPhysical = new G4PVPlacement(
+		leftSiPMRotation,
+		leftSiPMPosition,
+		siPMLogic,
+		"SiPMPhysical",
+		worldLogic,
+		false,
+		3,
+		true
+	);
+
 		#pragma endregion SiPM Geometry
 	
-
-	// This was a test for a split of the SiPM into SiPM bulk and SiPM photodetector,
-	// it was meant to sample optical properties and edep separately,
-	// but in the end i went for a parallel world since with this method i had to sacrifice cerenkov optics.
-	// 
-	// G4Box* siPMBulkSolid = new G4Box(
-	// 	"SiPMBulkSolid",
-	// 	plateSizeX / 2,
-	// 	plateSizeY / 2,
-	// 	siPMThickenss / 2 * 0.9
-	// );
-	// G4LogicalVolume* siPMBulkLogic = new G4LogicalVolume(siPMBulkSolid, sipm_material, "SiPMBulkLogic");
-	// G4ThreeVector siPMBulkPosition = G4ThreeVector(0, 0, plateThickness / 2 + siPMThickenss / 2 * 0.9 + gap);
-	// 
-	// G4VPhysicalVolume* siPMBulkPhysical = new G4PVPlacement(
-	// 	nullptr,
-	// 	siPMBulkPosition,
-	// 	siPMBulkLogic,
-	// 	"SiPMBulkPhysical",
-	// 	worldLogic,
-	// 	false,
-	// 	0,
-	// 	true
-	// );
-
-
 	#pragma endregion Geometry Definitions & Placements
 
 	// Boundary Surfaces Definitions
 	#pragma region Optical Surfaces Definitions
 
+	// Scintillator <-> SiPM Surfaces
+		#pragma region Scintillator-SiPM Surfaces
+	scint_to_sipm_top = new G4LogicalBorderSurface(
+		"ScintToSiPMTop",
+		scintPhysical,
+		topSiPMPhysical,
+		sipm_surface
+	);
+
+	scint_to_sipm_bottom = new G4LogicalBorderSurface(
+		"ScintToSiPMBottom",
+		scintPhysical,
+		bottomSiPMPhysical,
+		sipm_surface
+	);
+
+	scint_to_sipm_left = new G4LogicalBorderSurface(
+		"ScintToSiPMLeft",
+		scintPhysical,
+		leftSiPMPhysical,
+		sipm_surface
+	);
+
+	scint_to_sipm_right = new G4LogicalBorderSurface(
+		"ScintToSiPMRight",
+		scintPhysical,
+		rightSiPMPhysical,
+		sipm_surface
+	);
+
+
+	sipm_top_to_scint = new G4LogicalBorderSurface(
+		"SiPMTopToScint",
+		topSiPMPhysical,
+		scintPhysical,
+		scint_surface
+	);
+
+	sipm_bottom_to_scint = new G4LogicalBorderSurface(
+		"SiPMBottomToScint",
+		bottomSiPMPhysical,
+		scintPhysical,
+		scint_surface
+	);
+
+	sipm_left_to_scint = new G4LogicalBorderSurface(
+		"SiPMLeftToScint",
+		leftSiPMPhysical,
+		scintPhysical,
+		scint_surface
+	);
+
+	sipm_right_to_scint = new G4LogicalBorderSurface(
+		"SiPMRightToScint",
+		rightSiPMPhysical,
+		scintPhysical,
+		scint_surface
+	);
+
+		#pragma endregion Scintillator-SiPM Surfaces
+	
 	// Scintillator <-> Coating Surfaces
 		#pragma region Scintillator-Coating Surfaces
-	scint_to_coating_top = new G4LogicalBorderSurface(
-		"ScintToCoatingTop",
-		scintPhysical,
-		xCoatingTopPhysical,
-		coating_surface
-	);
-
-	scint_to_coating_bottom = new G4LogicalBorderSurface(
-		"ScintToCoatingBottom",
-		scintPhysical,
-		xCoatingBottomPhysical,
-		coating_surface
-	);
-
-	scint_to_coating_left = new G4LogicalBorderSurface(
-		"ScintToCoatingLeft",
-		scintPhysical,
-		yCoatingLeftPhysical,
-		coating_surface
-	);
-
-	scint_to_coating_right = new G4LogicalBorderSurface(
-		"ScintToCoatingRight",
-		scintPhysical,
-		yCoatingRightPhysical,
-		coating_surface
-	);
-
+	
 	scint_to_coating_front = new G4LogicalBorderSurface(
 		"ScintToCoatingFront",
 		scintPhysical,
@@ -292,32 +292,11 @@ G4VPhysicalVolume* DetectorConstruction::BuildGeometry()
 		coating_surface
 	);
 
-	coating_top_to_scint = new G4LogicalBorderSurface(
-		"CoatingTopToScint",
-		xCoatingTopPhysical,
+	scint_to_coating_back = new G4LogicalBorderSurface(
+		"ScintToCoatingBack",
 		scintPhysical,
-		scint_surface
-	);
-
-	coating_bottom_to_scint = new G4LogicalBorderSurface(
-		"CoatingBottomToScint",
-		xCoatingBottomPhysical,
-		scintPhysical,
-		scint_surface
-	);
-
-	coating_left_to_scint = new G4LogicalBorderSurface(
-		"CoatingLeftToScint",
-		yCoatingLeftPhysical,
-		scintPhysical,
-		scint_surface
-	);
-
-	coating_right_to_scint = new G4LogicalBorderSurface(
-		"CoatingRightToScint",
-		yCoatingRightPhysical,
-		scintPhysical,
-		scint_surface
+		backCoatingPhysical,
+		coating_surface
 	);
 
 	coating_front_to_scint = new G4LogicalBorderSurface(
@@ -327,26 +306,15 @@ G4VPhysicalVolume* DetectorConstruction::BuildGeometry()
 		scint_surface
 	);
 
-		#pragma endregion Scintillator-Coating Surfaces
-	
-	// Scintillator <-> SiPM Surfaces
-		#pragma region Scintillator-SiPM Surfaces
-	
-	scint_to_sipm = new G4LogicalBorderSurface(
-		"ScintToSiPM",
-		scintPhysical,
-		siPMPhysical,
-		sipm_surface
-	);
-
-	sipm_to_scint = new G4LogicalBorderSurface(
-		"SiPMToScint",
-		siPMPhysical,
+	coating_back_to_scint = new G4LogicalBorderSurface(
+		"CoatingBackToScint",
+		backCoatingPhysical,
 		scintPhysical,
 		scint_surface
 	);
 	
-		#pragma endregion Scintillator-SiPM Surfaces
+
+		#pragma endregion Scintillator-Coating Surfaces
 
 	#pragma endregion Optical Surfaces Definitions
 
@@ -368,9 +336,7 @@ G4VPhysicalVolume* DetectorConstruction::BuildGeometry()
 		// I followed a 1/5 or 1/10 rule of thumb for the cuts
 		makeRegion("ScintRegion", scintLogic, 50 * um, 30 * um, 30 * um);
 		makeRegion("SiPMRegion", siPMLogic, 20 * um, 10 * um, 10 * um);
-		makeRegion("XCoatingRegion", xCoatingLogic, 5 * um, 2 * um, 2 * um);
-		makeRegion("YCoatingRegion", yCoatingLogic, 5 * um, 2 * um, 2 * um);
-		makeRegion("FrontCoatingRegion", frontCoatingLogic, 5 * um, 2 * um, 2 * um);
+		makeRegion("CoatingRegion", coatingLogic, 5 * um, 2 * um, 2 * um);
 	}
 
 	#pragma endregion Cuts
@@ -609,9 +575,7 @@ void DetectorConstruction::ConstructSDandField()
 	coatingPSedep->SetFilter(muFilter); // to get all particles edep comment out this line
 	coatingMFD->RegisterPrimitive(coatingPSedep);
 
-	SetSensitiveDetector("XCoatLogic", coatingMFD);
-	SetSensitiveDetector("YCoatLogic", coatingMFD);
-	SetSensitiveDetector("FrontCoatLogic", coatingMFD);
+	SetSensitiveDetector("CoatLogic", coatingMFD);
 
 	#pragma endregion Coating MFD
 
@@ -625,17 +589,11 @@ void DetectorConstruction::ConstructSDandField()
 	sdManager->AddNewDetector(siliconPMSD);
 	
 	// Assign the SiPMSD to the SiPM logical volume
+	// I'll differentiate between the physical copies using the copy number assigned during placement
+	// in particular i'll use add it to the hit class to identify which SiPM detected the photon.
+	// This way i'll only have to handle a single SD ie a single hit collection.
 	SetSensitiveDetector("SiPMLogic", siliconPMSD); // builtin method of G4VUserDetectorConstruction
 
 	#pragma endregion SiPM SD & MFD
-
-	// Test SiPM Bulk MFD
-	// G4MultiFunctionalDetector* siPMBulkMFD = new G4MultiFunctionalDetector("SiPMBulkMFD");
-	// sdManager->AddNewDetector(siPMBulkMFD);
-	// 
-	// G4PSEnergyDeposit* siPMBulkPSedep = new G4PSEnergyDeposit("Edep");
-	// siPMBulkPSedep->SetFilter(muFilter); // to get all particles edep comment out this line
-	// siPMBulkMFD->RegisterPrimitive(siPMBulkPSedep);
-	// SetSensitiveDetector("SiPMBulkLogic", siPMBulkMFD);
 
 }

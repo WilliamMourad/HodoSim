@@ -21,6 +21,7 @@ public:
 	void SetTime(G4double time);
 	void SetNReflections(G4int nReflections);
 	void SetNReflectionsAtCoating(G4int nReflectionsAtCoating);
+	void SetSiPMID(G4int siPMID);
 
 
 	G4double GetEdep() const { return _edep; }
@@ -29,6 +30,7 @@ public:
 	G4ThreeVector GetPosition() const { return _position; }
 	G4int GetNReflections() const { return _nReflections; }
 	G4int GetNReflectionsAtCoating() const { return _nReflectionsAtCoating; }
+	G4int GetSiPMID() const { return _siPMID; }
 
 private:
 	G4int _eventID;
@@ -38,6 +40,7 @@ private:
 	G4ThreeVector _position;
 	G4int _nReflections;
 	G4int _nReflectionsAtCoating;
+	G4int _siPMID;
 };
 
 // Memory allocation handler (required for hits collections)

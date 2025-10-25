@@ -89,18 +89,19 @@ private:
 	G4OpticalSurface* scint_surface;
 	G4OpticalSurface* sipm_surface;
 
-	G4LogicalBorderSurface* scint_to_coating_top;
-	G4LogicalBorderSurface* scint_to_coating_bottom;
-	G4LogicalBorderSurface* scint_to_coating_left;
-	G4LogicalBorderSurface* scint_to_coating_right;
 	G4LogicalBorderSurface* scint_to_coating_front;
-	G4LogicalBorderSurface* coating_top_to_scint;
-	G4LogicalBorderSurface* coating_bottom_to_scint;
-	G4LogicalBorderSurface* coating_left_to_scint;
-	G4LogicalBorderSurface* coating_right_to_scint;
+	G4LogicalBorderSurface* scint_to_coating_back;
 	G4LogicalBorderSurface* coating_front_to_scint;
-	G4LogicalBorderSurface* scint_to_sipm;
-	G4LogicalBorderSurface* sipm_to_scint;
+	G4LogicalBorderSurface* coating_back_to_scint;
+
+	G4LogicalBorderSurface* scint_to_sipm_top;
+	G4LogicalBorderSurface* scint_to_sipm_bottom;
+	G4LogicalBorderSurface* scint_to_sipm_right;
+	G4LogicalBorderSurface* scint_to_sipm_left;
+	G4LogicalBorderSurface* sipm_top_to_scint;
+	G4LogicalBorderSurface* sipm_bottom_to_scint;
+	G4LogicalBorderSurface* sipm_right_to_scint;
+	G4LogicalBorderSurface* sipm_left_to_scint;
 
 	// For a better implementation I should consider adding also some class variables
 	// for the names/instances of volumes/borders, initializing the names in the constructor.

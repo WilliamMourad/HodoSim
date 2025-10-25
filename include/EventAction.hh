@@ -11,6 +11,7 @@ struct EventActionParameters {
 	G4String scintLVName;
 	G4String siliconPMSDName;
 	G4String opCName;
+	G4ThreeVector scintGeometry;
 };
 
 class EventAction : public G4UserEventAction {
@@ -29,7 +30,7 @@ public:
 private:
 
 	static G4double SumOverHC(const G4THitsMap<G4double>* hm);
-	
+
 	EventActionParameters _eventActionParameters;
 	G4AnalysisManager* analysisManager;
 

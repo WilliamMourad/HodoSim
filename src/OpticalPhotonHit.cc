@@ -40,6 +40,11 @@ void OpticalPhotonHit::SetNReflectionsAtCoating(G4int nReflectionsAtCoating)
 	_nReflectionsAtCoating = nReflectionsAtCoating;
 }
 
+void OpticalPhotonHit::SetSiPMID(G4int siPMID)
+{
+	_siPMID = siPMID;
+}
+
 
 G4ThreadLocal G4Allocator<OpticalPhotonHit>* OpticalPhotonHitAllocator = nullptr;
 

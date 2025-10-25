@@ -3,7 +3,6 @@
 #include "G4MTRunManager.hh"
 
 // My classes
-#include "ParallelWorld.hh"
 #include "DetectorConstruction.hh"
 #include "PrimaryGeneratorAction.hh"
 #include "RunAction.hh"
@@ -98,7 +97,7 @@ int main(int argc, char** argv) {
 		1,								// particleN
 		55 * MeV,						// particleMeanEnergy
 		0 * MeV,						// particleEnergySigma
-		{0, 0, -2.5 * cm},				// gpsPosition
+		{1. * cm, 1. * cm, -2.5 * cm},	// gpsPosition
 		0.6 * cm,						// gpsRadius
 		{1, 0, 0},						// gpsRot1
 		{0, -1, 0},						// gpsRot2
@@ -126,17 +125,13 @@ int main(int argc, char** argv) {
 
 	G4PhysListFactory factory;
 	auto physicsList = factory.GetReferencePhysList("FTFP_BERT_EMZ");
-	// auto physicsList = new FTFP_BERT;
-	
-	auto pwPhysics = new G4ParallelWorldPhysics("ParallelWorld");
 
 	auto optPhysics = new G4OpticalPhysics();
 	auto optParams = G4OpticalParameters::Instance();
 	optParams->SetScintTrackSecondariesFirst(true);
 
 	physicsList->RegisterPhysics(optPhysics);
-	physicsList->RegisterPhysics(pwPhysics);
-	physicsList->SetVerboseLevel(1);
+	physicsList->SetVerboseLevel(0);
 	
 	# pragma endregion PhysicsList Definition & Initialization
 
@@ -154,15 +149,6 @@ int main(int argc, char** argv) {
 		opCName,
 		enableCuts
 	);
-
-	ParallelWorld* parallelWorld = new ParallelWorld(
-		"ParallelWorld",
-		scintGeometry.sizeZ,
-		siPMThickness,
-		gap
-	);
-
-	detectorConstruction->RegisterParallelWorld(parallelWorld);
 
 	#pragma endregion DetectorConstruction Definition & Initialization
 
@@ -183,6 +169,11 @@ int main(int argc, char** argv) {
 		scintLVName,
 		siliconPMSDName, 
 		opCName,
+		G4ThreeVector(
+			scintGeometry.sizeX,
+			scintGeometry.sizeY,
+			scintGeometry.sizeZ
+		)
 	};
 
 	TrackingActionParameters trackingActionParameters = TrackingActionParameters{};

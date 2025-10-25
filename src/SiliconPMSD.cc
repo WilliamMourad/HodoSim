@@ -57,6 +57,7 @@ G4bool SiliconPMSD::ProcessHits(G4Step* step, G4TouchableHistory* history)
 	auto* trackInfo = static_cast<OpticalPhotonTrackInfo*>(track->GetUserInformation());
 	G4int nReflections = trackInfo ? trackInfo->nReflections : 0;
 	G4int nReflectionsAtCoating = trackInfo ? trackInfo->nReflectionsAtCoating : 0;
+	G4int siPMID = step->GetPreStepPoint()->GetTouchable()->GetCopyNumber();
 
 
 	OpticalPhotonHit* opHit = new OpticalPhotonHit();
@@ -67,6 +68,7 @@ G4bool SiliconPMSD::ProcessHits(G4Step* step, G4TouchableHistory* history)
 	opHit->SetPosition(step->GetPreStepPoint()->GetPosition());
 	opHit->SetNReflections(nReflections);
 	opHit->SetNReflectionsAtCoating(nReflectionsAtCoating);
+	opHit->SetSiPMID(siPMID);
 
 	// add the number of reflections of the optical photon with the coating surface 
 
