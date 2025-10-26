@@ -38,7 +38,7 @@ int main(int argc, char** argv) {
 	#pragma region Simulation Parameters
 
 	G4bool enableTrackingVerbose = false;
-	G4bool enableVis = true;	// enable visualization, set to false when running heavy batch jobs
+	G4bool enableVis = false;	// enable visualization, set to false when running heavy batch jobs
 	G4int threads = 20;			// number of threads to be used in MT mode, ignore in ST mode
 
 	G4bool enableCuts = true; // enable production cuts, to test different responses
@@ -47,6 +47,8 @@ int main(int argc, char** argv) {
 	G4String scintLVName = "ScintLogic";
 
 	G4String opCName = "OpticalPhotonHitsCollection";
+
+	G4int sipmsPerSide = 16; // number of SiPMs per side of the scintillator
 
 	G4double worldSizeXYZ = 1. * m;
 	
@@ -147,7 +149,8 @@ int main(int argc, char** argv) {
 		siliconPMSDName,
 		scintLVName,
 		opCName,
-		enableCuts
+		enableCuts,
+		sipmsPerSide
 	);
 
 	#pragma endregion DetectorConstruction Definition & Initialization
@@ -162,18 +165,15 @@ int main(int argc, char** argv) {
 	};
 	
 	RunActionParameters runActionParameters = RunActionParameters{
-		enableCuts
+		enableCuts,
+		sipmsPerSide
 	};
 	
 	EventActionParameters eventActionParameters = EventActionParameters{ 
 		scintLVName,
 		siliconPMSDName, 
 		opCName,
-		G4ThreeVector(
-			scintGeometry.sizeX,
-			scintGeometry.sizeY,
-			scintGeometry.sizeZ
-		)
+		sipmsPerSide
 	};
 
 	TrackingActionParameters trackingActionParameters = TrackingActionParameters{};

@@ -51,7 +51,8 @@ public:
 		G4String siliconPMSDName,
 		G4String scintLVName,
 		G4String opCName,
-		G4bool enableCuts
+		G4bool enableCuts,
+		G4int sipmsPerSide
 	);
 	~DetectorConstruction();
 
@@ -70,6 +71,7 @@ private:
 	G4double _coatingThickness;
 	G4double _siPMThickness;
 	G4double _gap;
+	G4int _sipmsPerSide;
 
 	G4String _scintLVName;
 	G4String _siliconPMSDName;
@@ -94,14 +96,9 @@ private:
 	G4LogicalBorderSurface* coating_front_to_scint;
 	G4LogicalBorderSurface* coating_back_to_scint;
 
-	G4LogicalBorderSurface* scint_to_sipm_top;
-	G4LogicalBorderSurface* scint_to_sipm_bottom;
-	G4LogicalBorderSurface* scint_to_sipm_right;
-	G4LogicalBorderSurface* scint_to_sipm_left;
-	G4LogicalBorderSurface* sipm_top_to_scint;
-	G4LogicalBorderSurface* sipm_bottom_to_scint;
-	G4LogicalBorderSurface* sipm_right_to_scint;
-	G4LogicalBorderSurface* sipm_left_to_scint;
+	std::vector<G4LogicalBorderSurface*> sipm_to_scint;
+	std::vector<G4LogicalBorderSurface*> scint_to_sipm;
+
 
 	// For a better implementation I should consider adding also some class variables
 	// for the names/instances of volumes/borders, initializing the names in the constructor.

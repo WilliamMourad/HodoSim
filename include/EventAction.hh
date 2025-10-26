@@ -11,7 +11,7 @@ struct EventActionParameters {
 	G4String scintLVName;
 	G4String siliconPMSDName;
 	G4String opCName;
-	G4ThreeVector scintGeometry;
+	G4int sipmsPerSide;
 };
 
 class EventAction : public G4UserEventAction {

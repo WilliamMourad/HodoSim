@@ -21,26 +21,24 @@ With that in mind, there are multiple configurations that can be studied.
 
 ## Single Plate Configuration
 
-the first one i want to implement is the following: a single scintillator plate (BC-412) of size 50mm x 50mm x 3mm, coated on the front and back sides with a reflective layer 
-(Aluminum) of thickness 50um, surrounded by 4 SiPM (50mm x 3mm x 3mm), one for each lateral side of the plate.
+the first configuration i want to implement is the following: a single scintillator plate (BC-412) of size 50mm x 50mm x 3mm, coated on the front and back sides with a reflective layer 
+(Aluminum) of thickness 50um, surrounded by 4xN SiPMs, positioned on the lateral sides of the plate.
+
 
 This configuration's pro are that:
 - relying on a single scintillator plate should lower the cost and complexity of the installation,
 - the muons cross a minimal amount of material (thus losing less energy),
-- the 4 SiPM should provide a good prediction power over the beam position.
+- the 4xN SiPMs should provide a good prediction power over the beam position and shape.
 
 The Cons are that:
 - the scintillator plate thickness is still bounded by the SiPMs thickness (1-3mm),
-- the information on the beam intensity cant be isolated from the background.
+- it can't predict the beam intensity (muons at the surface per second).
 
 
 
 # Observations  
 ---
 
-## On Physics
-
-## On Geant4
 
 # Questions
 ---
@@ -54,14 +52,20 @@ Before prooceding i want to report some important considerations regarding data.
 the sim requires tens of thousands of muons to store enough data for other plots).
 To avoid huge output files i suggest using histograms (and not NTuples) to sample optical photons.
 
-All the collected data is already listed in the MuScinTest project description, check that for reference.
-Eventually (if needed) i'll gather some more data and report it here.
+I want to collect the following data:
+
+**Scint/Cer Optical Photons Count (optical photons per event detect by a single SiPM)**:
+this will be used to predict the beam position/shape/intensity.
+
+**Total Energy Deposition by Component/Material & Particle Type (MeV)**:
+this will be used to verify the transparency of the hodoscope to muons of different energies.
 
 # Next Step
 ---
 Each configuration proposed can undergo an optimization process using machine learning techniques (bayesian optimization, reinforcement learning, etc..).
-This will not be covered in this project but in the future i may explore this path.
+This will not be covered in this project but i may explore this path later.
 
 # History of Changes
 ---
 - 2025-10-18: Initial commit, initialized the project starting from a clone of the MuScinTest project.
+- 2025-10-26: Successfully updated the geometry to match the single plate configuration.

@@ -6,6 +6,7 @@
 
 struct RunActionParameters {
 	G4bool enableCuts;
+	G4int sipmsPerSide;
 };
 
 class RunAction : public G4UserRunAction 

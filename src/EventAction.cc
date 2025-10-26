@@ -56,9 +56,9 @@ void EventAction::EndOfEventAction(const G4Event* event)
 	
 	// From here on, i'll just fill the root structures with the data
 
-	const G4int nSiPMs = 4; // hardcoded for now, will be improved later
-	G4int nScintHits[nSiPMs] = {0, 0, 0, 0};
-	G4int nCerHits[nSiPMs] = {0, 0, 0, 0};
+	const G4int nSiPMs = _eventActionParameters.sipmsPerSide * 4;
+	std::vector<G4int> nScintHits(nSiPMs);
+	std::vector<G4int> nCerHits(nSiPMs);
 	G4double scintEdep = SumOverHC(map_scint_edep_HC);
 	G4double scintMuPathLength = SumOverHC(map_scint_muPathLength_HC);
 	G4double coatingEdep = SumOverHC(map_coating_edep_HC);
@@ -78,8 +78,6 @@ void EventAction::EndOfEventAction(const G4Event* event)
 			auto edep = hit->GetEdep();
 			auto time = hit->GetTime();
 			auto position = hit->GetPosition();
-			auto nReflections = hit->GetNReflections();
-			auto nReflectionsAtCoating = hit->GetNReflectionsAtCoating();
 			auto siPMID = hit->GetSiPMID();
 
 			// Check siPMID validity
@@ -90,12 +88,10 @@ void EventAction::EndOfEventAction(const G4Event* event)
 				analysisManager->FillH1(0, edep / eV); // Scint OP Energy 
 				analysisManager->FillH1(1, time / ns); // Scint OP Time
 				analysisManager->FillH2(0, position.x() / mm, position.y() / mm); // Scint OP Spread
-				analysisManager->FillH1(2 + siPMID, nReflectionsAtCoating); // OP Reflections
 				nScintHits[siPMID]++;
 			} else if (process == "Cerenkov") {
 				nCerHits[siPMID]++;
 			}
-
 		}
 	}
 
@@ -106,20 +102,27 @@ void EventAction::EndOfEventAction(const G4Event* event)
 		
 	if (siliconPMSD_HC && scint_edep_HC && scint_muPathLength_HC && coating_edep_HC)
 	{
-		analysisManager->FillNtupleDColumn(0, event->GetEventID());		// eventID
-		analysisManager->FillNtupleDColumn(1, nScintHits[0]);			// scint OP hits
-		analysisManager->FillNtupleDColumn(2, nScintHits[1]);			// scint OP hits
-		analysisManager->FillNtupleDColumn(3, nScintHits[2]);			// scint OP hits
-		analysisManager->FillNtupleDColumn(4, nScintHits[3]);			// scint OP hits
-		analysisManager->FillNtupleDColumn(5, nCerHits[0]);				// cer OP hits
-		analysisManager->FillNtupleDColumn(6, nCerHits[1]);				// cer OP hits
-		analysisManager->FillNtupleDColumn(7, nCerHits[2]);				// cer OP hits
-		analysisManager->FillNtupleDColumn(8, nCerHits[3]);				// cer OP hits
-		analysisManager->FillNtupleDColumn(9, scintEdep / eV);			// scint edep
-		analysisManager->FillNtupleDColumn(10, coatingEdep / eV);		// coating edep
-		analysisManager->FillNtupleDColumn(11, scintMuPathLength / mm);	// scint mu path length
-		analysisManager->FillNtupleDColumn(12, muonHitX / mm);			// muon X coordinate on hit
-		analysisManager->FillNtupleDColumn(13, muonHitY / mm);			// muon Y coordinate on hit 
+		// eventID
+		analysisManager->FillNtupleDColumn(0, event->GetEventID());		
+		
+		// scint OP hits
+		for (int i = 0; i < nSiPMs; i++)
+		{
+			analysisManager->FillNtupleDColumn(1 + i, nScintHits[i]);
+
+		}
+		// cer OP hits
+		for (int i = 0; i < nSiPMs; i++)
+		{
+			analysisManager->FillNtupleDColumn(1 + nSiPMs + i, nCerHits[i]);
+		}
+
+		G4int ct = 1 + 2 * nSiPMs;
+		analysisManager->FillNtupleDColumn(ct, scintEdep / eV);			// scint edep
+		analysisManager->FillNtupleDColumn(ct + 1, coatingEdep / eV);		// coating edep
+		analysisManager->FillNtupleDColumn(ct + 2, scintMuPathLength / mm);	// scint mu path length
+		analysisManager->FillNtupleDColumn(ct + 3, muonHitX / mm);			// muon X coordinate on hit
+		analysisManager->FillNtupleDColumn(ct + 4, muonHitY / mm);			// muon Y coordinate on hit 
 		analysisManager->AddNtupleRow();
 	}
 

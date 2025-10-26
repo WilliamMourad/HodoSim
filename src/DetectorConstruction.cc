@@ -24,7 +24,8 @@ DetectorConstruction::DetectorConstruction(
 	G4String siliconPMSDName,
 	G4String scintLVName,
 	G4String opCName,
-	G4bool enableCuts
+	G4bool enableCuts,
+	G4int sipmsPerSide
 ) : G4VUserDetectorConstruction()
 {
 	_worldSizeXYZ = worldSizeXYZ;
@@ -32,6 +33,7 @@ DetectorConstruction::DetectorConstruction(
 	_coatingThickness = coatingThickness;
 	_siPMThickness = siPMThickness; 
 	_gap = gap;
+	_sipmsPerSide = sipmsPerSide;
 
 	_siliconPMSDName = siliconPMSDName;
 	_scintLVName = scintLVName;
@@ -62,7 +64,7 @@ G4VPhysicalVolume* DetectorConstruction::BuildGeometry()
 
 	G4double coatingThickness = _coatingThickness;
 
-	G4double siPMThickenss = _siPMThickness;
+	G4double siPMThickness = _siPMThickness;
 
 	G4double gap = _gap;
 
@@ -152,68 +154,111 @@ G4VPhysicalVolume* DetectorConstruction::BuildGeometry()
 	// For simplicity i'll start with just 4 SiPMs, one for each lateral side of the scint plate.
 	// In a future version I may consider adding a variable to control the number of SiPMs per side.
 
+	G4double sipmDeltaX = plateSizeX / (_sipmsPerSide);	// These are to be intended in the sipm local frame
+	G4double sipmDeltaY = plateThickness;				// where the Z axis is equivalent to the Y axis of the global frame
+	G4double sipmDeltaZ = siPMThickness;
+	G4int globalIndex = 0;
+
 	G4Box* siPMSolid = new G4Box(
 		"SiPMSolid",
-		plateSizeX / 2,
-		siPMThickenss / 2,
-		siPMThickenss / 2
+		sipmDeltaX / 2,
+		sipmDeltaZ / 2,
+		sipmDeltaY / 2
 	);
 	G4LogicalVolume* siPMLogic = new G4LogicalVolume(siPMSolid, sipm_material, "SiPMLogic");
+
+	std::vector<G4VPhysicalVolume*> sipmPhysicalVolumes;
+
+	// Top Row
+	for (int i = 0; i < _sipmsPerSide; i++)
+	{
+		G4double x_i = -plateSizeX / 2 + sipmDeltaX / 2 + i * sipmDeltaX;
+		G4double y_i = plateSizeY / 2 + sipmDeltaZ / 2 + gap;
+		G4double z_i = 0;
+		G4ThreeVector position = G4ThreeVector(x_i, y_i, z_i);
+		auto pVol = new G4PVPlacement(
+			nullptr,
+			position,
+			siPMLogic,
+			"SiPMPhysical",
+			worldLogic,
+			false,
+			globalIndex,
+			true
+		);
+		sipmPhysicalVolumes.push_back(pVol);
+		globalIndex++;
+	}
 	
-	G4ThreeVector topSiPMPosition = G4ThreeVector(0, plateSizeY / 2 + siPMThickenss / 2 + gap, 0);
-	G4ThreeVector bottomSiPMPosition = G4ThreeVector(0, -plateSizeY / 2 - siPMThickenss / 2 - gap, 0);
-	G4ThreeVector rightSiPMPosition = G4ThreeVector(plateSizeX / 2 + siPMThickenss / 2 + gap, 0, 0);
-	G4ThreeVector leftSiPMPosition = G4ThreeVector(- plateSizeX / 2 - siPMThickenss / 2 - gap, 0, 0);
-	G4RotationMatrix* rightSiPMRotation = new G4RotationMatrix();
-	G4RotationMatrix* leftSiPMRotation = new G4RotationMatrix();
+	// Right Row
+	for (int i = 0; i < _sipmsPerSide; i++)
+	{
+		G4double x_i = plateSizeX / 2 + sipmDeltaZ / 2 + gap;
+		G4double y_i = plateSizeY / 2 - sipmDeltaX / 2 - i * sipmDeltaX;
+		G4double z_i = 0;
+		G4ThreeVector position = G4ThreeVector(x_i, y_i, z_i);
+		G4RotationMatrix* rotation = new G4RotationMatrix();
+		rotation->rotateZ(90 * deg);
+		auto pVol = new G4PVPlacement(
+			rotation,
+			position,
+			siPMLogic,
+			"SiPMPhysical",
+			worldLogic,
+			false,
+			globalIndex,
+			true
+		);
+		sipmPhysicalVolumes.push_back(pVol);
+		globalIndex++;
+	}
 	
-	rightSiPMRotation->rotateZ(90 * deg);
-	leftSiPMRotation->rotateZ(-90 * deg);
+	// Bottom Row
+	for (int i = 0; i < _sipmsPerSide; i++)
+	{
+		G4double x_i = plateSizeX / 2 - sipmDeltaX / 2 - i * sipmDeltaX;
+		G4double y_i = - plateSizeY / 2 - sipmDeltaZ / 2 - gap;
+		G4double z_i = 0;
+		G4ThreeVector position = G4ThreeVector(x_i, y_i, z_i);
+		G4RotationMatrix* rotation = new G4RotationMatrix();
+		rotation->rotateX(180 * deg);
+		auto pVol = new G4PVPlacement(
+			nullptr,
+			position,
+			siPMLogic,
+			"SiPMPhysical",
+			worldLogic,
+			false,
+			globalIndex,
+			true
+		);
+		sipmPhysicalVolumes.push_back(pVol);
+		globalIndex++;
+	}
 
-	G4VPhysicalVolume* topSiPMPhysical = new G4PVPlacement(
-		nullptr,
-		topSiPMPosition,
-		siPMLogic,
-		"SiPMPhysical",
-		worldLogic,
-		false,
-		0,
-		true
-	);
-
-	G4VPhysicalVolume* bottomSiPMPhysical = new G4PVPlacement(
-		nullptr,
-		bottomSiPMPosition,
-		siPMLogic,
-		"SiPMPhysical",
-		worldLogic,
-		false,
-		2,
-		true
-	);
-
-	G4VPhysicalVolume* rightSiPMPhysical = new G4PVPlacement(
-		rightSiPMRotation,
-		rightSiPMPosition,
-		siPMLogic,
-		"SiPMPhysical",
-		worldLogic,
-		false,
-		1,
-		true
-	);
-
-	G4VPhysicalVolume* leftSiPMPhysical = new G4PVPlacement(
-		leftSiPMRotation,
-		leftSiPMPosition,
-		siPMLogic,
-		"SiPMPhysical",
-		worldLogic,
-		false,
-		3,
-		true
-	);
-
+	// Left Row
+	for (int i = 0; i < _sipmsPerSide; i++)
+	{
+		G4double x_i = - plateSizeX / 2 - sipmDeltaZ / 2 - gap;
+		G4double y_i = - plateSizeY / 2 + sipmDeltaX / 2 + i * sipmDeltaX;
+		G4double z_i = 0;
+		G4ThreeVector position = G4ThreeVector(x_i, y_i, z_i);
+		G4RotationMatrix* rotation = new G4RotationMatrix();
+		rotation->rotateZ(-90 * deg);
+		auto pVol = new G4PVPlacement(
+			rotation,
+			position,
+			siPMLogic,
+			"SiPMPhysical",
+			worldLogic,
+			false,
+			globalIndex,
+			true
+		);
+		sipmPhysicalVolumes.push_back(pVol);
+		globalIndex++;
+	}
+	
 		#pragma endregion SiPM Geometry
 	
 	#pragma endregion Geometry Definitions & Placements
@@ -223,62 +268,28 @@ G4VPhysicalVolume* DetectorConstruction::BuildGeometry()
 
 	// Scintillator <-> SiPM Surfaces
 		#pragma region Scintillator-SiPM Surfaces
-	scint_to_sipm_top = new G4LogicalBorderSurface(
-		"ScintToSiPMTop",
-		scintPhysical,
-		topSiPMPhysical,
-		sipm_surface
-	);
 
-	scint_to_sipm_bottom = new G4LogicalBorderSurface(
-		"ScintToSiPMBottom",
-		scintPhysical,
-		bottomSiPMPhysical,
-		sipm_surface
-	);
+	for (G4int i = 0; i < _sipmsPerSide * 4; i++)
+	{
+		G4String border_name_i = "ScintToSiPM" + std::to_string(i);
+		auto scint_to_sipm_i = new G4LogicalBorderSurface(
+			border_name_i,
+			scintPhysical,
+			sipmPhysicalVolumes[i],
+			sipm_surface
+		);
 
-	scint_to_sipm_left = new G4LogicalBorderSurface(
-		"ScintToSiPMLeft",
-		scintPhysical,
-		leftSiPMPhysical,
-		sipm_surface
-	);
+		G4String border_name_ri = "SiPMToScint" + std::to_string(i);
+		auto sipm_to_scint_i = new G4LogicalBorderSurface(
+			border_name_ri,
+			sipmPhysicalVolumes[i],
+			scintPhysical,
+			scint_surface
+		);
 
-	scint_to_sipm_right = new G4LogicalBorderSurface(
-		"ScintToSiPMRight",
-		scintPhysical,
-		rightSiPMPhysical,
-		sipm_surface
-	);
-
-
-	sipm_top_to_scint = new G4LogicalBorderSurface(
-		"SiPMTopToScint",
-		topSiPMPhysical,
-		scintPhysical,
-		scint_surface
-	);
-
-	sipm_bottom_to_scint = new G4LogicalBorderSurface(
-		"SiPMBottomToScint",
-		bottomSiPMPhysical,
-		scintPhysical,
-		scint_surface
-	);
-
-	sipm_left_to_scint = new G4LogicalBorderSurface(
-		"SiPMLeftToScint",
-		leftSiPMPhysical,
-		scintPhysical,
-		scint_surface
-	);
-
-	sipm_right_to_scint = new G4LogicalBorderSurface(
-		"SiPMRightToScint",
-		rightSiPMPhysical,
-		scintPhysical,
-		scint_surface
-	);
+		sipm_to_scint.push_back(sipm_to_scint_i);
+		scint_to_sipm.push_back(scint_to_sipm_i);
+	}
 
 		#pragma endregion Scintillator-SiPM Surfaces
 	

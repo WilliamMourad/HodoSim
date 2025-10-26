@@ -30,27 +30,30 @@ RunAction::RunAction(RunActionParameters runActionParameters)
 	analysisManager->SetVerboseLevel(1);
 	analysisManager->SetNtupleMerging(true);
 
-	
 	// Create Ntuples and histograms here using analysisManager
+	
+	G4int sipmsPerSide = _runActionParameters.sipmsPerSide;
 
 	analysisManager->CreateH1("ScintOpticalPhotonsEnergy", "Scint Optical Photons Energy (eV)", 1000, 2.2, 3.3);
 	analysisManager->CreateH1("ScintOpticalPhotonsTime", "Scint Optical Photons Time (ns)", 1000, 0, 30);
 	analysisManager->CreateH2("ScintOpticalPhotonsSpread", "Scint Optical Photons Spread; X (mm); Y (mm)", 100, -40, 40, 100, -40, 40);
-	analysisManager->CreateH1("OpticalPhotonsReflections0", "Optical Photons Reflections", 1000, 0, 1000);
-	analysisManager->CreateH1("OpticalPhotonsReflections1", "Optical Photons Reflections", 1000, 0, 1000);
-	analysisManager->CreateH1("OpticalPhotonsReflections2", "Optical Photons Reflections", 1000, 0, 1000);
-	analysisManager->CreateH1("OpticalPhotonsReflections3", "Optical Photons Reflections", 1000, 0, 1000);
+	
+	// I turned down reflection histograms since they are not essential right now
+	// analysisManager->CreateH1("OpticalPhotonsReflections0", "Optical Photons Reflections", 1000, 0, 1000);
+	// analysisManager->CreateH1("OpticalPhotonsReflections1", "Optical Photons Reflections", 1000, 0, 1000);
+	// analysisManager->CreateH1("OpticalPhotonsReflections2", "Optical Photons Reflections", 1000, 0, 1000);
+	// analysisManager->CreateH1("OpticalPhotonsReflections3", "Optical Photons Reflections", 1000, 0, 1000);
 
 	analysisManager->CreateNtuple("PerEventCollectedData", "Per-Event Collected Data");
 	analysisManager->CreateNtupleDColumn("EventID");
-	analysisManager->CreateNtupleDColumn("ScintOPsCollected0");
-	analysisManager->CreateNtupleDColumn("ScintOPsCollected1");
-	analysisManager->CreateNtupleDColumn("ScintOPsCollected2");
-	analysisManager->CreateNtupleDColumn("ScintOPsCollected3");
-	analysisManager->CreateNtupleDColumn("CerOPsCollected0");
-	analysisManager->CreateNtupleDColumn("CerOPsCollected1");
-	analysisManager->CreateNtupleDColumn("CerOPsCollected2");
-	analysisManager->CreateNtupleDColumn("CerOPsCollected3");
+	for (G4int i = 0 ; i < sipmsPerSide * 4; i++)
+	{
+		analysisManager->CreateNtupleDColumn("ScintOPsCollected" + std::to_string(i));
+	}
+	for (G4int i = 0; i < sipmsPerSide * 4; i++)
+	{
+		analysisManager->CreateNtupleDColumn("CerOPsCollected" + std::to_string(i));
+	}
 	analysisManager->CreateNtupleDColumn("ScintTotalEdep");
 	analysisManager->CreateNtupleDColumn("CoatingTotalEdep");
 	analysisManager->CreateNtupleDColumn("MuPathLength");
