@@ -1,0 +1,15 @@
+# This macro will be called when running in batch mode
+
+# Turn off all the verbose output
+/control/verbose 0
+/event/verbose 0
+/run/verbose 0
+/process/verbose 0
+/process/em/verbose 0
+/process/had/verbose 0
+/tracking/verbose 0
+/analysis/verbose 1
+
+# Run the simulation for N events
+/run/initialize
+/run/beamOn 1

@@ -2,9 +2,13 @@
 
 # General 
 /control/verbose 1
-/control/saveHistory
+/event/verbose 0
 /run/verbose 1
-/tracking/verbose 1
+/process/verbose 0
+/process/em/verbose 0
+/process/had/verbose 0
+/tracking/verbose 0
+/analysis/verbose 1
 
 /run/initialize
 

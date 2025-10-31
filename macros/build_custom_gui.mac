@@ -3,3 +3,6 @@
 # Add quick plot funcionality to the GUI
 #/gui/addMenu plot Plot
 #/gui/addButton plot "Plot with RootApp" "/control/execute macros\_plot.mac"
+
+/gui/addMenu calibration Calibration
+/gui/addButton calibration "Run Calibration Macro" "/control/execute macros\extra\calibration.mac"

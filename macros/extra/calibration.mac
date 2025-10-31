@@ -1,0 +1,45 @@
+# Calibration macro
+# Im setting the gps to shoot muons on all the surface of the detector.
+# The output will be used to train a small neural network at predicting the muon position on hit.
+# Alternatively, it will be used to build a set of light-response functions (one per SiPM).
+
+# Full Plate
+/gps/pos/type Plane
+/gps/pos/shape Square
+/gps/pos/halfx 25 mm
+/gps/pos/halfy 25 mm
+/gps/pos/halfz 25 mm
+
+# Top Left corner
+# /gps/pos/type Plane
+# /gps/pos/shape Square
+# /gps/pos/halfx 5 mm
+# /gps/pos/halfy 5 mm
+# /gps/pos/halfz 5 mm
+# /gps/pos/centre  -20 20 -25 mm
+
+# Top Right corner
+# /gps/pos/type Plane
+# /gps/pos/shape Square
+# /gps/pos/halfx 5 mm
+# /gps/pos/halfy 5 mm
+# /gps/pos/halfz 5 mm
+# /gps/pos/centre  20 20 -25 mm
+ 
+# Bottomn Left corner
+# /gps/pos/type Plane
+# /gps/pos/shape Square
+# /gps/pos/halfx 5 mm
+# /gps/pos/halfy 5 mm
+# /gps/pos/halfz 5 mm
+# /gps/pos/centre  -20 -20 -25 mm
+ 
+# Bottom Right corner
+# /gps/pos/type Plane
+# /gps/pos/shape Square
+# /gps/pos/halfx 5 mm
+# /gps/pos/halfy 5 mm
+# /gps/pos/halfz 5 mm
+# /gps/pos/centre  20 -20 -25 mm
+
+/run/beamOn 25000

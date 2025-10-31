@@ -1,4 +1,9 @@
-﻿# Purposes
+﻿<p>
+<img src="images/detector.png" width="45%"/>
+<img src="images/detector_exploded.png" width="45%"/>
+</p>
+
+# Purposes
 ---
 A Geant4 simulation of an hodoscope, used to monitor the properties of a muon beam.
 The Scint+SiPM detector used in the simulation comes from the MuScinTest project, where it was accurately studied and verified.
@@ -14,6 +19,13 @@ In particular, for a fixed set of parameters such as
 - a certain transparency to muons of different energies (to minimize the impact of the hodoscope on the beam itself).
 - a consistent equivalence with real experimental data (once available).
 
+# Dependencies
+---
+> **Geant4** (v11.3.0)
+
+> **ROOT** (v6.32.10), to compile and run the RootApp
+
+> **rapidyaml** (v0.10.0), to parse YAML configuration files
 
 # Implementation
 ---
@@ -46,7 +58,7 @@ The Cons are that:
 
 # Output
 ---
-Before prooceding i want to report some important considerations regarding data.
+Before proceeding i want to report some important considerations regarding data.
 
 - A lot of space is required to sample single optical photons information (per-photon logs) (just imagine that for each MeV of the crossing particle, approx 10k optical photons are produced, 
 the sim requires tens of thousands of muons to store enough data for other plots).

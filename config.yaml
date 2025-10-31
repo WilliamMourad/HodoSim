@@ -1,0 +1,43 @@
+detector_geometry:
+  world_size_xyz: 1000.0 # mm
+  gap: 10.0 # mm
+  components:
+    scintillator:
+      box_geometry: [50.0, 50.0, 3.0] # mm
+      scint_data:
+        yield_factor: 1.0
+        yield: 8000 # MeV-1
+        wl_peak: 2.85 # eV
+        wl_left: 3.09 # eV
+        wl_right: 2.41 # eV
+        decay_time: 3.3 # ns
+        r_index: 1.58
+        abs_length: 2100.0 # mm
+    sipm:
+      thickness: 3.0 # mm
+      sipms_per_side: 16
+    coating:
+      thickness: 0.05 # mm
+
+primary_generator:
+  particle_gun:
+    is_active: false
+    particle_number: 1
+    particle_energy: 55.0 # MeV
+    position: [0.0, 0.0, -25] # mm
+    direction: [0, 0, 1]
+  gps:
+    is_active: true
+    particle_number: 1
+    particle_mean_energy: 55.0 # MeV
+    particle_energy_deviation: 0.0 # MeV
+    position: [-15.0, 15.0, -25] # mm
+    radius: 6.0 # mm
+    rotation1: [1, 0, 0]
+    rotation2: [0, -1, 0]
+    beam_aperture_x: 0.0
+    beam_aperture_y: 0.0
+    
+output: 
+  directory: output_data
+  file: test_output.root
