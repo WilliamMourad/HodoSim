@@ -42,4 +42,37 @@
 # /gps/pos/halfz 5 mm
 # /gps/pos/centre  20 -20 -25 mm
 
-/run/beamOn 25000
+# Top Edge
+# /gps/pos/type Plane
+# /gps/pos/shape Square
+# /gps/pos/halfx 25 mm
+# /gps/pos/halfy 1.25 mm
+# /gps/pos/halfz 25 mm
+# /gps/pos/centre 0 23.75 -25 mm
+
+# Right Edge
+# /gps/pos/type Plane
+# /gps/pos/shape Square
+# /gps/pos/halfx 1.25 mm
+# /gps/pos/halfy 25 mm
+# /gps/pos/halfz 25 mm
+# /gps/pos/centre 23.75 0 -25 mm
+
+# Bottom Edge
+# /gps/pos/type Plane
+# /gps/pos/shape Square
+# /gps/pos/halfx 25 mm
+# /gps/pos/halfy 1.25 mm
+# /gps/pos/halfz 25 mm
+# /gps/pos/centre 0 -23.75 -25 mm
+
+# Left Edge
+# /gps/pos/type Plane
+# /gps/pos/shape Square
+# /gps/pos/halfx 1.25 mm
+# /gps/pos/halfy 25 mm
+# /gps/pos/halfz 25 mm
+# /gps/pos/centre -23.75 0 -25 mm
+
+
+/run/beamOn 1

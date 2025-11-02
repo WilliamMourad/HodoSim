@@ -2,8 +2,8 @@ cmake_minimum_required(VERSION 3.16...3.27)
 
 project(HodoSim)
 
-# Add RootApp subdirectory
-# add_subdirectory(RootApp)
+# Add PlotPredict subdirectory
+add_subdirectory(PlotPredict)
 # Comment this next line if you got the code from GitHub
 # the Analyzer subdirectory is just for internal use.
 # add_subdirectory(Analyzer)

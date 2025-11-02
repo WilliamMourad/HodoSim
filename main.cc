@@ -31,7 +31,7 @@
 
 
 int main(int argc, char** argv) {
-	
+
 	// Set a different random seed based on current time / user preferences
 	CLHEP::HepRandom::setTheSeed(time(NULL));
 
@@ -109,7 +109,7 @@ int main(int argc, char** argv) {
 	CLHEP::HepRandom::setTheSeed(time(NULL));
 
 	G4bool enableTrackingVerbose = false;		// enable verbose output from TrackingAction (for debugging ONLY)
-	G4bool enableVis = true;					// enable visualization, set to false when running heavy batch jobs
+	G4bool enableVis = false;					// enable visualization, set to false when running heavy batch jobs
 	G4bool enableCuts = true;					// enable production cuts, to test different responses
 	G4int threads = 20;							// number of threads to be used in MT mode, ignore in ST mode
 

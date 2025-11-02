@@ -23,9 +23,11 @@ In particular, for a fixed set of parameters such as
 ---
 > **Geant4** (v11.3.0)
 
-> **ROOT** (v6.32.10), to compile and run the RootApp
+> **ROOT** (v6.32.10), to compile and run the PlotPredict app
 
 > **rapidyaml** (v0.10.0), to parse YAML configuration files
+
+> **ONNX Runtime** (v1.23.2), to run trained ML models in the PlotPredict app
 
 # Implementation
 ---
@@ -81,3 +83,4 @@ This will not be covered in this project but i may explore this path later.
 ---
 - 2025-10-18: Initial commit, initialized the project starting from a clone of the MuScinTest project.
 - 2025-10-26: Successfully updated the geometry to match the single plate configuration.
+- 2025-11-02: Added support for AI powered beam position/shape predictions in the PlotPredict app.

@@ -1,6 +1,6 @@
 detector_geometry:
   world_size_xyz: 1000.0 # mm
-  gap: 10.0 # mm
+  gap: 0.0 # mm
   components:
     scintillator:
       box_geometry: [50.0, 50.0, 3.0] # mm
