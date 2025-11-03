@@ -4,6 +4,9 @@
 #include <ROOT/RVec.hxx>
 #include <TCanvas.h>
 #include <TLegend.h>
+#include <TLegendEntry.h>
+#include <TPaveText.h>
+#include <TMarker.h>
 #include <TBox.h>
 
 #include <cmath>
@@ -28,60 +31,30 @@ void SaveBoth(TCanvas* c, const std::string& outdir, const std::string& name, co
 
 void PlotGraph(TCanvas* c1, TGraph* g1, TGraph* g2, std::string title, std::string outdir, std::string filename)
 {
-  
-    g1->SetTitle("Beam Reconstruction");
-    g1->GetXaxis()->SetLimits(-40, 40);
-    g1->SetMaximum(40);
-    g1->SetMinimum(-40);
+	// Draw the graphs
+    g1->SetTitle("Single Hit Per Event - Beam Reconstruction");
     auto ax = g1->GetXaxis();
     auto ay = g1->GetYaxis();
+
+    ax->SetLimits(-40, 40);
+    g1->SetMaximum(40);
+    g1->SetMinimum(-40);
+
     ax->SetTitle("X [mm]");
     ay->SetTitle("Y [mm]");
-    ax->SetNdivisions(6 + 5 * 100);
-    ax->SetLabelFont(42);
-    ax->SetTickLength(0.03);
-    ax->SetTitleFont(42);
-    ax->SetLabelSize(0.035);
-    ax->SetTitleSize(0.052);
-    ax->SetTitleOffset(.75);
 
-    ay->SetNdivisions(6 + 5 * 100);
-    ay->SetTickLength(0.03);
-    ay->SetLabelFont(42);
-    ay->SetTitleFont(42);
-    ay->SetLabelSize(0.035);
-    ay->SetTitleSize(0.052);
-    ay->SetTitleOffset(.75);
+	ay->SetTitleOffset(1.2);
 
     g1->SetMarkerStyle(21);
-    g1->SetMarkerColorAlpha(kBlue, 0.5);
-    g1->SetMarkerSize(0.6);
+    g1->SetMarkerColorAlpha(kBlue, 0.7);
+    g1->SetMarkerSize(0.4);
     g1->Draw("ap");
 
+    g2->SetLineWidth(0);
     g2->SetMarkerStyle(21);
-    g2->SetMarkerColorAlpha(kRed + 2, 0.5);
-    g2->SetMarkerSize(0.6);
+    g2->SetMarkerColorAlpha(kRed, 0.7);
+    g2->SetMarkerSize(0.4);
     g2->Draw("p same");
-
-    auto leg = new TLegend(0.75, 0.80, 0.90, 0.90);
-    leg->SetBorderSize(1);
-    leg->SetFillStyle(1001);
-    leg->SetFillColor(kWhite);
-    leg->SetTextFont(42);
-    leg->SetTextSize(0.025);
-    leg->AddEntry(g1, "True", "p");
-    leg->AddEntry(g2, "Predicted", "p");
-    leg->Draw();
-
-    gPad->Update();
-    leg->SetX2NDC(1 - gPad->GetRightMargin());
-    leg->SetY2NDC(1 - gPad->GetTopMargin());
-    auto w = leg->GetX2NDC() - leg->GetX1NDC();
-    auto h = leg->GetY2NDC() - leg->GetY1NDC();
-    leg->SetX1NDC(leg->GetX2NDC() - w);
-    leg->SetY1NDC(leg->GetY2NDC() - h);
-    gPad->Modified();
-    gPad->Update();
 
     // Draw the plate
     auto box = new TBox(-25, -25, 25, 25);
@@ -89,6 +62,50 @@ void PlotGraph(TCanvas* c1, TGraph* g1, TGraph* g2, std::string title, std::stri
     box->SetLineWidth(3);
     box->SetFillColorAlpha(kBlue, 0.1);
     box->Draw();
+    
+	// Draw legend
+    auto leg = new TLegend(0.10, 0.85, 0.47, 0.90);
+
+	leg->SetNColumns(2);
+    leg->SetBorderSize(1);
+    leg->SetFillStyle(1001);
+    leg->SetFillColor(kWhite);
+    leg->SetTextFont(42);
+    leg->SetTextSize(0.025);
+
+    auto m1 = new TMarker(0, 0, g1->GetMarkerStyle());
+	auto m2 = new TMarker(0, 0, g2->GetMarkerStyle());
+    m1->SetMarkerColor(g1->GetMarkerColor());
+    m1->SetMarkerSize(1.6);
+    m2->SetMarkerColor(kRed - 2);
+    m2->SetMarkerSize(1.6);
+    leg->AddEntry(m1, "True", "p");
+    leg->AddEntry(m2, "Predicted", "p");
+	
+    leg->Draw();
+
+    // Draw stats box
+	// for now very basic, just showing means
+    auto legStats = new TLegend(0.47, 0.76, 0.90, 0.90);
+
+    legStats->SetNColumns(2);
+    legStats->SetBorderSize(1);
+    legStats->SetFillStyle(1001);
+    legStats->SetFillColor(kWhite);
+    legStats->SetTextFont(42);
+    legStats->SetTextSize(0.025);
+
+    legStats->SetMargin(0.02);          
+    legStats->SetColumnSeparation(0.06); 
+    legStats->SetTextAlign(12);
+    legStats->AddEntry((TObject*)0, Form("Counts: %d", g1->GetN()), "");
+	legStats->AddEntry((TObject*)0, "", "");
+    legStats->AddEntry((TObject*)0, Form("<X>_{T}: %.2f mm", g1->GetMean(1)), "");
+    legStats->AddEntry((TObject*)0, Form("<X>_{P}: %.2f mm", g2->GetMean(1)), "");
+    legStats->AddEntry((TObject*)0, Form("<Y>_{T}: %.2f mm", g1->GetMean(2)), "");
+    legStats->AddEntry((TObject*)0, Form("<Y>_{P}: %.2f mm", g2->GetMean(2)), "");
+
+    legStats->Draw();
 
     SaveBoth(c1, outdir, filename);
     c1->Clear();
@@ -235,6 +252,8 @@ int main(int argc, char** argv)
     c1->SetTicky(1);
 
 
+
+
 	logMessage("\n=================================================", true);
     for (const auto& filename : filenames)
     {
@@ -297,7 +316,7 @@ int main(int argc, char** argv)
             g1, g2,
             "Beam Reconstruction",
             outdir,
-            std::filesystem::path(filename).filename().string()
+			std::filesystem::path(filename).stem().string()
         );
 
         logMessage("-------------------------------------------------", true);

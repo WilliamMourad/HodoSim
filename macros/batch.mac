@@ -12,4 +12,4 @@
 
 # Run the simulation for N events
 /run/initialize
-/run/beamOn 1
+/run/beamOn 1000
